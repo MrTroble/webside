@@ -2,3 +2,25 @@
     --theme-primary: #ff0000;
     --theme-secondary: #800000;
 }
+
+.parallax {
+    position: fixed;
+    top: 0px;
+    width: 100;
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+}
+
+.parallax-content{
+    width: 100%;
+    position: absolute;
+    background-color: black;
+    z-index: 1;
+    top: 300px;
+}
+
+.project-bar {
+    padding: var(--theme-element-spacing) 50px;
+    margin-bottom: 0px;
+}
