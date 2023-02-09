@@ -3,6 +3,25 @@
     --theme-secondary: #800000;
 }
 
+#quote {
+    font-size: 25px;
+    color: var(--theme-primary);
+    font-family: 'Roboto Mono', monospace;
+}
+
+#profile-bar {
+    margin-top: 50px;
+}
+
+#profile-bar a {
+    width: 100%;
+}
+
+.project-box .box-bottom a {
+    display: block;
+    margin-left: auto;
+}
+
 .parallax {
     position: fixed;
     top: 0px;
