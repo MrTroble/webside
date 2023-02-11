@@ -3,6 +3,27 @@
     --theme-secondary: #800000;
 }
 
+.footer {
+    background-color: var(--theme-grey-primary);
+}
+
+.footer .container {
+    padding: var(--theme-element-spacing) calc(var(--theme-element-spacing) * 2);
+    display: flex;
+    gap: var(--theme-element-spacing);
+    margin-bottom: 0px;
+    color: #808080;
+}
+
+.footer .container h6{
+    margin: 0px;
+    margin-bottom: 10px;
+}
+
+.footer .container a{
+    color: #808080;
+}
+ 
 #quote {
     font-size: 25px;
     color: var(--theme-primary);
