@@ -7,7 +7,7 @@
     background-color: var(--theme-grey-primary);
 }
 
-.footer .container {
+.footer [class*="container"] {
     padding: var(--theme-element-spacing) calc(var(--theme-element-spacing) * 2);
     display: flex;
     gap: var(--theme-element-spacing);
@@ -15,12 +15,12 @@
     color: #808080;
 }
 
-.footer .container h6{
+.footer [class*="container"] h6{
     margin: 0px;
     margin-bottom: 10px;
 }
 
-.footer .container a{
+.footer [class*="container"] a{
     color: #808080;
 }
  
