@@ -1,6 +1,10 @@
 :root {
-    --theme-primary: #ff0000;
+    --theme-primary: #e60000;
     --theme-secondary: #800000;
+}
+
+.menu a {
+    color: white;
 }
 
 .footer {
