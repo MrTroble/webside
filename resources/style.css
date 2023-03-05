@@ -46,6 +46,7 @@
     background-color: var(--theme-grey-primary);
     border-radius: var(--theme-border-radius);
     padding: 10px 15px;
+    cursor: pointer;
 }
 
 .skill *:first-child {
