@@ -42,6 +42,20 @@
     width: 100%;
 }
 
+.skill {
+    background-color: var(--theme-grey-primary);
+    border-radius: var(--theme-border-radius);
+    padding: 10px 15px;
+}
+
+.skill *:first-child {
+    font-size: 22px;
+}
+
+.skill *:last-child {
+    font-size: 12px;
+}
+
 .project-box .box-bottom a {
     display: block;
     margin-left: auto;
