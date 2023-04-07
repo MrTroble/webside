@@ -3,8 +3,34 @@
     --theme-secondary: #800000;
 }
 
+.menu-frame {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    padding: 0px;
+    z-index: 2;
+}
+
+@media screen and (min-width: 769px) {
+    .menu-frame {
+        box-sizing: border-box;
+        max-width: 1200px;
+        margin: 0px auto;
+        padding: var(--theme-element-spacing);
+        background: linear-gradient(0deg, transparent 0%, black 100%);
+    }
+
+    .menu {
+        border-radius: var(--theme-border-radius);
+    }
+}
+
 .menu a {
     color: white;
+}
+
+.menu a:hover {
+    text-decoration: underline;
 }
 
 .footer {

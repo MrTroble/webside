@@ -114,7 +114,12 @@ function initializeNavigation() {
         navigation = document.createElement('div');
         navigation.classList.add('navigation');
         navigation.classList.add('only-mobile');
-        document.body.insertBefore(navigation, menu ? menu.nextElementSibling : document.body.firstChild);
+        let menuParent = menu.parentElement;
+        while(menuParent.nodeName === 'BODY' && menuParent.parentElement != undefined) {
+            menuParent = menu.parentElement;
+        }
+        if (menuParent.nextElementSibling) document.body.insertBefore(navigation, menuParent.nextElementSibling);
+        else document.body.appendChild(navigation);
     }
     if (navigation && navigation.classList.contains('navigation-headlines')) {
         const navigationHeadlines = document.createElement('div');
