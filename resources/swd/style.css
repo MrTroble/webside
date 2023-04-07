@@ -14,10 +14,11 @@
     --theme-grey-primary: #e6e6e6;
     --theme-grey-secondary: #cccccc;
     --theme-text-color: #000000;
+    --theme-text-grey-color: #808080;
+    --theme-error-color: #e60000;
     --theme-border-radius: 5px;
     --theme-border-width: 3px;
     --theme-element-spacing: 30px;
-    --theme-box-spacing: 20px;
     background-color: var(--theme-background);
     color: var(--theme-text-color);
 }
@@ -32,6 +33,8 @@ body {
     margin: 0px;
     background-repeat: no-repeat;
 }
+
+@media screen and (max-width: 768px) {:root {font-size: 15px; line-height: 30px;}}
 
 /* darkmode and lightmode */
 
@@ -92,44 +95,37 @@ body {
 /* menu */
 
 .menu {
+    display: flex;
     box-sizing: border-box;
-    margin-bottom: 0;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
     position: sticky;
     position: -webkit-sticky;
-    text-align: center;
     top: 0;
-    max-height: 50px;
-    line-height: 50px;
+    height: 50px;
     width: 100%;
     padding: 0 10px;
     z-index: 2;
+    font-size: 19px;
+    margin-bottom: 0;
+    text-decoration: none;
+    white-space: nowrap;
     background-color: var(--theme-primary);
-    overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
 }
 
-.menu:hover {overflow-x: auto}
-@media (hover: none) {.menu {overflow-x: auto}}
-@media screen and (max-width: 768px) {.menu {overflow-x: auto}}
-
 .menu *:not(div) {
+    box-sizing: border-box;
     padding: 0 10px;
-    font-size: 19px;
-    text-decoration: none;
     color: #ffffff99;
-    float: left;
 }
 
-.menu-centered-2 a {padding: 0px; width: 50%}
-.menu-centered-3 a {padding: 0px; width: 33%}
-.menu-centered-4 a {padding: 0px; width: 25%}
-.menu-centered-5 a {padding: 0px; width: 19%}
-.menu-centered-6 a {padding: 0px; width: 16%}
-.menu-centered-7 a {padding: 0px; width: 14%}
-.menu-centered-8 a {padding: 0px; width: 12%}
-.menu-centered-9 a {padding: 0px; width: 11%}
+.menu-centered {
+    justify-content: space-between;
+}
 
 .menu a:hover, .menu .menu-active {
     color: white;
@@ -142,15 +138,24 @@ body {
 }
 
 .menu img {
-    float: left;
-    box-sizing: border-box;
-    display: inline;
     width: initial;
     height: 50px;
     padding: 16px 10px 16px 10px;
     margin: 0px;
     cursor: pointer;
 }
+
+.menu input {
+    color: var(--theme-text-color);
+    border: 0px;
+    max-height: 35px;
+    min-height: 35px;
+    margin: 10px 10px;
+    width: initial;
+}
+
+.menu .dropdown {margin: 0 10px;}
+.menu .dropdown input {margin: 0px;}
 
 /* navigation */
 
@@ -235,19 +240,19 @@ h1, h2, h3, h4, h5, h6 {
     margin: calc(var(--theme-element-spacing) * 2) 0px var(--theme-element-spacing) 0px;
 }
 
-h1{font-size: 40px; line-height: 60px;}
-h2{font-size: 30px; line-height: 50px;}
-h3{font-size: 25px; line-height: 45px;}
-h4{font-size: 20px; line-height: 35px; letter-spacing: 1px;}
-h5{font-size: 18px; line-height: 28px; letter-spacing: 1px; font-weight: bold;}
-h6{font-size: 16px; line-height: 26px; letter-spacing: 1px; font-weight: bold; text-transform: uppercase}
+h1 {font-size: 40px; line-height: 60px;}
+h2 {font-size: 30px; line-height: 50px;}
+h3 {font-size: 25px; line-height: 45px;}
+h4 {font-size: 20px; line-height: 35px; letter-spacing: 1px;}
+h5 {font-size: 18px; line-height: 28px; letter-spacing: 1px; font-weight: bold;}
+h6 {font-size: 16px; line-height: 26px; letter-spacing: 1px; font-weight: bold; text-transform: uppercase}
 
 /* boxes */
 
 .box {
     min-height: 20px;
     background-color: var(--theme-grey-primary);
-    padding: var(--theme-box-spacing);
+    padding: calc(var(--theme-element-spacing) / 2);
     margin-bottom: var(--theme-element-spacing);
     border-radius: var(--theme-border-radius);
     background-repeat: no-repeat;
@@ -281,7 +286,8 @@ input, select, textarea {
     color: var(--theme-text-color);
     min-height: 40px;
     font-size: 16px;
-    padding: 10px;
+    padding: 8px 10px;
+    margin-bottom: var(--theme-element-spacing);
     border: solid 0px var(--theme-grey-secondary);
     border-bottom-width: 3px;
     border-radius: var(--theme-border-radius);
@@ -312,6 +318,10 @@ input:focus, select:focus, textarea:focus {
     border-color: var(--theme-primary);
 }
 
+input:invalid[dirty], select:invalid[dirty], textarea:invalid[dirty] {
+    border-color: var(--theme-error-color);
+}
+
 .button {
     font-size: 18px;
     line-height: 35px;
@@ -340,6 +350,79 @@ input:focus, select:focus, textarea:focus {
 .button-right {border-top-left-radius: 0px; border-bottom-left-radius: 0px}
 
 textarea, select, input, button {outline: none}
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {-webkit-appearance: none; margin: 0;}
+input[type=number] {appearance: textfield;}
+
+.input {
+    display: block !important;
+    position: relative;
+    margin-bottom: var(--theme-element-spacing);
+}
+
+.input input, .input textarea {
+    height: 60px;
+    padding: 30px 10px 8px 10px;
+    margin: 0px;
+}
+
+.input textarea {height: 120px;}
+
+.input-name {
+    position: absolute;
+    top: 0px;
+    left: 10px;
+    font-size: 13px;
+    color: var(--theme-text-grey-color);
+}
+
+input:focus + .input-name, textarea:focus + .input-name {
+    color: var(--theme-primary);
+}
+
+input:invalid[dirty] + .input-name, textarea:invalid[dirty] + .input-name {
+    color: var(--theme-error-color);
+}
+
+.input-error {
+    position: absolute;
+    translate: 0px 5px;
+    font-size: 12px;
+    line-height: 12px;
+    max-width: calc(100% - 20px);
+    color: var(--theme-error-color);
+}
+
+.input-range {
+    position: absolute;
+    translate: 0px 5px;
+    font-size: 13px;
+    line-height: 12px;
+    right: 0;
+    color: var(--theme-text-grey-color);
+}
+
+.input-buttons {
+    display: grid;
+    grid-template-columns: fit-content(0px) auto fit-content(0px);
+}
+
+.input-buttons * {
+    display: inline-block;
+    margin-bottom: var(--theme-element-spacing);
+}
+
+.input-buttons input {
+    border: none;
+}
+
+.input-buttons .button {
+    display: flex;
+    align-items: center;
+}
+
+.input-buttons .button.active {
+    background-color: var(--theme-primary);
+}
 
 /* dropdown */
 
@@ -362,11 +445,31 @@ textarea, select, input, button {outline: none}
     overflow-y: auto;
 }
 
+.dropdown .tooltip {
+    display: none;
+    position: absolute;
+    box-sizing: border-box;
+    text-align: center;
+    z-index: 3;
+    top: calc(100% + 10px);
+    padding: 1px 10px;
+    left: 0;
+    font-size: 15px;
+    border: none;
+    border-radius: var(--theme-border-radius);
+    color: white;
+    background-color: rgba(12, 12, 12, 0.8);
+}
+
 .dropdown .dropdown-content > *:first-child {margin-top: 0px}
 .dropdown .dropdown-content > *:last-child {margin-bottom: 0px}
 
-.dropdown.dropdown-hover:hover .dropdown-content {
+.dropdown.dropdown-hover:hover .dropdown-content, .dropdown-content .tooltip.show {
     display: block !important;
+}
+
+.dropdown:hover .tooltip {
+    display: ruby !important;
 }
 
 .dropdown .dropdown-content a {
@@ -383,23 +486,6 @@ textarea, select, input, button {outline: none}
     background-color: var(--theme-grey-secondary);
     color: var(--theme-text-color);
     text-decoration: none;
-}
-
-.dropdown .tooltip {
-    display: none;
-    position: absolute;
-    box-sizing: border-box;
-    z-index: 3;
-    top: calc(100% + 10px);
-    padding: 1px 10px;
-    border-radius: var(--theme-border-radius);
-    font-size: 15px;
-    color: white;
-    background-color: rgba(12, 12, 12, 0.8);
-}
-
-.dropdown:hover .tooltip {
-    display: block;
 }
 
 /* dialog */
@@ -472,12 +558,14 @@ label {
 .overlay {
     color: white;
     position: relative;
+    height: fit-content;
+    width: fit-content;
 }
 
 .overlay > .top-left, .overlay > .top-right, .overlay > .bottom-left, .overlay > .bottom-right, .overlay > .centered {
     position: absolute;
     text-align: left;
-    margin: var(--theme-box-spacing);
+    margin: calc( var(--theme-element-spacing) / 2);
 }
   
 .overlay > .top-left {top: 0px; left: 0px;}
@@ -709,12 +797,7 @@ ol li:last-child {padding-bottom: 0px}
 
 [class*="grid-"] {
     display: grid;
-    grid-gap: var(--theme-element-spacing);
-    margin-bottom: var(--theme-element-spacing);
-}
-
-[class*="grid-"] > * {
-    margin-bottom: 0px;
+    column-gap: var(--theme-element-spacing);
 }
 
 .grid-1 {grid-template-columns: repeat(1, minmax(0, 1fr))}
@@ -897,8 +980,6 @@ ol li:last-child {padding-bottom: 0px}
 
 @media screen and (max-width: 768px) {.not-mobile {display: none !important}}
 @media screen and (min-width: 769px) {.only-mobile {display: none !important}}
-
-@media screen and (max-width: 768px) {:root {font-size: 15px; line-height: 30px; --theme-box-spacing: 15px;}}
 
 /* padding */
 

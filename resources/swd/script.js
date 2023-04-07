@@ -9,31 +9,22 @@ document.addEventListener('readystatechange', event => {
 let loaded = false;
 let submitions = [];
 
-let menu;
-let navigation;
-let navigationMenu;
-let navigationContent;
-let headlines = [];
-let dropdowns = [];
-
-function onLoad() {
-    for (let element of document.getElementsByTagName('*')) {
+function onLoad(root) {
+    for (const element of root.getElementsByTagName('*')) {
         if (!menu && element.classList.contains('menu')) menu = element;
         else if (!navigation && element.classList.contains('navigation')) navigation = element;
         else if (!navigationContent && element.classList.contains('navigation-content')) navigationContent = element;
         else if (element.nodeName == 'H2' && element.id != '') headlines.push(element);
-        else if (element.classList.contains('dropdown')) {
-            const content = element.getElementsByClassName('dropdown-content')[0];
-            if (!content) continue;
-            const input = element.getElementsByTagName('input')[0];
-            if (element.classList.contains('dropdown-hover')) element.addEventListener('mouseover', event => translateDropdown(element, content));
-            else element.addEventListener('click', event => toggleDropdown(element, content));
-            dropdowns.push(element);
-            if (input) initializeInputDropdown(dropdown, content, input);
-        } else if (element.nodeName == 'CODE') {
-            if (element.classList.contains("html")) element.innerHTML = highlightHtml(element.innerHTML);
-            else if (element.classList.contains("css")) element.innerHTML = highlightCss(element.innerHTML);
+        else if (element.classList.contains('dropdown')) initializeDropdown(element);
+        else if (element.classList.contains('input')) initializeInputObject(element);
+        else if (element.classList.contains('input-buttons')) initializeInputButtons(element);
+        else if (element.nodeName == 'CODE') {
+            if (element.classList.contains("html")) highlightHtml(element);
+            else if (element.classList.contains("css")) highlightCss(element);
         }
+        if (element.nodeName === 'INPUT') initializeInput(element);
+        if (element.hasAttribute('include')) include(element, element.getAttribute('include'));
+        else if (element.hasAttribute('replace')) replace(element, element.getAttribute('replace'));
     }
     initializeMenu();
     initializeNavigation();
@@ -51,12 +42,39 @@ function onWindowResize() {
     hideAllDropdowns();
 }
 
+function addOnLoad(submission) {
+    submitions.push(submission);
+}
+
+// *********************
+// * Include Replace   *
+// *********************
+
+function include(element, src) {
+    fetch(src).then(response => response.text()).then(text => element.innerHTML = text).then(text => onLoad(element));
+}
+
+function replace(element, src) {
+    fetch(src).then(response => response.text()).then(text => element.innerHTML = text).then(text => onLoad(element)).then(text => {
+        for (const child of element.children) {
+            element.after(child);
+        }
+        element.remove();
+    });
+}
+
+// *********************
+// * Menu              *
+// *********************
+
+let menu;
+
 function initializeMenu() {
-    if (!menu || !menu.classList.contains('mobile-menu')) return;
+    if (!menu.classList.contains('mobile-menu')) return;
     navigationMenu = document.createElement('div');
     navigationMenu.classList.add('navigation-menu');
     navigationMenu.classList.add('only-mobile');
-    for (let element of menu.getElementsByTagName('*')) {
+    for (let element of menu.children) {
         if (element.nodeName != 'A' || element.classList.contains('not-mobile') || element.classList.contains('menu-title')) continue;
         const menuItem = element.cloneNode(true);
         menuItem.addEventListener('click', () => toggleMobileMenu());
@@ -64,6 +82,32 @@ function initializeMenu() {
         element.classList.add('not-mobile');
     }
 }
+
+function setMenuFocus(string) {
+    if (!loaded) {
+        submitions.push(() => setMenuFocus(string));
+        return;
+    }
+    if (string == undefined || string == '' || !menu) return;
+    for (let element of menu.getElementsByTagName('A')) {
+        if (element.innerText == string) element.classList.add('menu-active');
+        else element.classList.remove('menu-active');
+    }
+    if (!navigationMenu) return;
+    for (let element of navigationMenu.getElementsByTagName('A')) {
+        if (element.innerText == string) element.classList.add('menu-active');
+        else element.classList.remove('menu-active');
+    }
+}
+
+// *********************
+// * Navigation        *
+// *********************
+
+let navigation;
+let navigationMenu;
+let navigationContent;
+let headlines = [];
 
 function initializeNavigation() {
     if (!navigation && menu && menu.classList.contains('mobile-menu')) {
@@ -87,8 +131,21 @@ function initializeNavigation() {
     if (navigation && !navigationContent) navigationContent = navigation.nextElementSibling;
 }
 
+function setNavigationFocus(string) {
+    if (!loaded) {
+        submitions.push(() => setNavigationFocus(string));
+        return;
+    }
+    if (string == undefined || string == '' || !navigation) return;
+    for (let element of navigation.getElementsByTagName('A')) {
+        if (element.parentElement.classList.contains('navigation-menu')) continue;
+        if (element.innerText == string) element.classList.add('navigation-active');
+        else element.classList.remove('menu-active');
+    }
+}
+
 function toggleMobileMenu() {
-    if (window.innerWidth > 768) return;
+    if (window.innerWidth > 768 || !navigationMenu) return;
     if (!navigation.classList.contains('show')) {
         navigation.insertBefore(navigationMenu, navigation.children[0]);
         navigation.classList.add('show');
@@ -101,34 +158,70 @@ function toggleMobileMenu() {
     }
 }
 
-function setMenuFocus(string) {
-    if (!loaded) {
-        submitions.push(() => setMenuFocus(string));
-        return;
+// *********************
+// * Input             *
+// *********************
+
+function initializeInput(input) {
+    input.addEventListener('input', event => input.setAttribute('dirty', ''));
+    input.addEventListener('focusout', event => {
+        if (input.value !== 0 && input.value !== '') input.setAttribute('dirty', '');
+    });
+}
+
+function initializeInputObject(input) {
+    let inputField = input.getElementsByTagName('input')[0];
+    if (!inputField) inputField = input.getElementsByTagName('textarea')[0];
+    if (!inputField) return;
+    const inputError = input.getElementsByClassName('input-error')[0]
+    const inputRange = input.getElementsByClassName('input-range')[0];
+    if (inputRange) {
+        const attribute = inputField.getAttribute('maxlength');
+        inputRange.innerText = inputField.value.length + (attribute ? '/' + attribute : '');
+        inputField.addEventListener('input', event => inputRange.innerText = event.target.value.length + (attribute ? '/' + attribute : ''));
     }
-    if (string == undefined || string == '' || !menu) return;
-    for (let element of menu.getElementsByTagName('A')) {
-        if (element.innerText == string) element.classList.add('menu-active');
-        else element.classList.remove('menu-active');
-    }
-    if (!navigationMenu) return;
-    for (let element of navigationMenu.getElementsByTagName('A')) {
-        if (element.innerText == string) element.classList.add('menu-active');
-        else element.classList.remove('menu-active');
+    if (inputError) {
+        inputError.innerText = inputField.validationMessage;
+        inputField.addEventListener('input', event => inputError.innerText = inputField.validationMessage);
     }
 }
 
-function setNavigationFocus(string) {
-    if (!loaded) {
-        submitions.push(() => setNavigationFocus(string));
-        return;
-    }
-    if (string == undefined || string == '' || !navigation) return;
-    for (let element of navigation.getElementsByTagName('A')) {
-        if (element.parentElement.classList.contains('navigation-menu')) continue;
-        if (element.innerText == string) element.classList.add('navigation-active');
-        else element.classList.remove('menu-active');
-    }
+function initializeInputButtons(input) {
+    const inputField = input.getElementsByTagName('input')[0];
+    if (!inputField) return;
+    const buttons = input.getElementsByTagName('a');
+    inputField.addEventListener('focus', event => Array.from(buttons).forEach(button => button.classList.add('active')));
+    inputField.addEventListener('focusout', event => Array.from(buttons).forEach(button => button.classList.remove('active')));
+}
+
+function incrementInput(element) {
+    const input = element.parentElement.getElementsByTagName('input')[0];
+    if (!input || !(!input.hasAttribute('max') || input.getAttribute('max') > input.value)) return;
+    input.value++;
+    input.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+}
+
+function decrementInput(element) {
+    const input = element.parentElement.getElementsByTagName('input')[0];
+    if (!input || !(!input.hasAttribute('min') || input.getAttribute('min') < input.value)) return;
+    input.value--;
+    input.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+}
+
+// *********************
+// * Dropdown          *
+// *********************
+
+let dropdowns = [];
+
+function initializeDropdown(dropdown) {
+    const content = dropdown.getElementsByClassName('dropdown-content')[0];
+    if (!content) return;
+    if (dropdown.classList.contains('dropdown-hover')) dropdown.addEventListener('mouseover', event => translateDropdown(dropdown, content));
+    dropdown.addEventListener('click', event => toggleDropdown(dropdown, content));
+    dropdowns.push(dropdown);
+    const input = dropdown.getElementsByTagName('input')[0];
+    if (input) initializeInputDropdown(dropdown, content, input);
 }
 
 function initializeInputDropdown(dropdown, content, input) {
@@ -218,6 +311,20 @@ function hideAllDropdowns() {
     }
 }
 
+function translateDropdown(dropdown, content) {
+    const contentRect = content.getBoundingClientRect();
+    const dropdownRect = dropdown.getBoundingClientRect();
+    if (contentRect.right > window.innerWidth) content.style.cssText = 'left: -' + (contentRect.width - dropdownRect.width) + 'px;';
+    if (dropdown.getElementsByTagName('input')[0]) {
+        if (contentRect.bottom > window.innerHeight && window.innerHeight - contentRect.top > 100) content.style.maxHeight = (window.innerHeight - contentRect.top) + 'px';
+        else content.style.maxHeight = '';
+    }    
+}
+
+// *********************
+// * Dialog            *
+// *********************
+
 function toggleDialog(dialog) {
     if (!dialog.classList.contains('show')) {
         hideAllDropdowns();
@@ -227,18 +334,12 @@ function toggleDialog(dialog) {
     }
 }
 
-function translateDropdown(dropdown, content) {
-    const contentRect = content.getBoundingClientRect();
-    const dropdownRect = dropdown.getBoundingClientRect();
-    if (contentRect.right > window.innerWidth) content.style.cssText = 'left: -' + (contentRect.width - dropdownRect.width) + 'px;';
-    if (dropdown.getElementsByTagName('input')[0]) {
-        if (contentRect.bottom > window.innerHeight && window.innerHeight - contentRect.top > 100) content.style.maxHeight = (window.innerHeight - contentRect.top) + 'px';
-        else content.style.maxHeight = '';
-    }
-    
-}
+// *********************
+// * Code Highlighting *
+// *********************
 
-function highlightHtml(string) {
+function highlightHtml(element) {
+    const string = element.innerHTML;
     let codeString = '';
     let tag = false;
     let attribute = false;
@@ -280,10 +381,11 @@ function highlightHtml(string) {
         }
     }
     codeString += string.substring(lastAddedIndex, string.length - 1);
-    return codeString;
+    element.innerHTML = codeString;
 }
 
-function highlightCss(string) {
+function highlightCss(element) {
+    const string = element.innerHTML;
     let codeString = '';
     let key = false;
     let value = false;
@@ -321,5 +423,5 @@ function highlightCss(string) {
         }
     }
     codeString += string.substring(lastAddedIndex, string.length - 1);
-    return '<span class="blue-text">' + codeString + '</span>';
+    element.innerHTML = '<span class="blue-text">' + codeString + '</span>';
 }
