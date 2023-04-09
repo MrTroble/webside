@@ -33,25 +33,8 @@
     text-decoration: underline;
 }
 
-.footer {
-    background-color: var(--theme-grey-primary);
-}
-
-.footer [class*="container"] {
-    padding: var(--theme-element-spacing) calc(var(--theme-element-spacing) * 2);
-    display: flex;
-    gap: var(--theme-element-spacing);
-    margin-bottom: 0px;
-    color: #808080;
-}
-
-.footer [class*="container"] h6{
-    margin: 0px;
-    margin-bottom: 10px;
-}
-
-.footer [class*="container"] a{
-    color: #808080;
+h1, h2, h3, h4, h5, h6 {
+    scroll-margin-top: calc(100px + var(--theme-element-spacing));
 }
  
 #quote {
