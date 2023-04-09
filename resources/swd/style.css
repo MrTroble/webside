@@ -7,7 +7,7 @@
     font-family: Roboto, sans-serif;
     scroll-behavior: smooth;
     font-size: 18px;
-    line-height: 35px;
+    line-height: 30px;
     --theme-primary: #004dff;
     --theme-secondary: #003ecc;
     --theme-background: #ffffff;
@@ -34,7 +34,7 @@ body {
     background-repeat: no-repeat;
 }
 
-@media screen and (max-width: 768px) {:root {font-size: 15px; line-height: 30px;}}
+@media screen and (max-width: 768px) {:root {font-size: 15px; line-height: 25px; --theme-element-spacing: 25px;}}
 
 /* darkmode and lightmode */
 
@@ -238,6 +238,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-weight: 500;
     margin: calc(var(--theme-element-spacing) * 2) 0px var(--theme-element-spacing) 0px;
+    scroll-margin-top: calc(50px + var(--theme-element-spacing));
 }
 
 h1 {font-size: 40px; line-height: 60px;}
@@ -297,6 +298,8 @@ input, select, textarea {
 textarea {
     height: auto;
     resize: vertical;
+    min-height: 120px;
+    max-height: 240px;
 }
 
 input[type=submit] {
@@ -337,6 +340,7 @@ input:invalid[dirty], select:invalid[dirty], textarea:invalid[dirty] {
     width: min-content;
     text-decoration: none;
     user-select: none;
+    cursor: pointer;
     -webkit-user-select: none;
     -ms-user-select: none;
 }
@@ -429,6 +433,10 @@ input:invalid[dirty] + .input-name, textarea:invalid[dirty] + .input-name {
 .dropdown {
     display: inline-block;
     position: relative;
+}
+
+.dropdown input {
+    margin-bottom: 0px;
 }
 
 .dropdown .dropdown-content {
@@ -695,6 +703,14 @@ img {
     margin-bottom: var(--theme-element-spacing);
 }
 
+.icon {
+    display: inline;
+    margin: initial;
+    max-width: initial;
+    object-fit: fill;
+    transform: translateY(2px);
+}
+
 video {
     display: block;
     margin: 0px auto;
@@ -856,6 +872,17 @@ ol li:last-child {padding-bottom: 0px}
     .grid-xl-10 {grid-template-columns: repeat(10, minmax(0, 1fr))}
     .grid-xl-11 {grid-template-columns: repeat(11, minmax(0, 1fr))}
     .grid-xl-12 {grid-template-columns: repeat(12, minmax(0, 1fr))}
+}
+
+/* flex */
+
+.flex {
+    display: flex; gap:
+    var(--theme-element-spacing);
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
 }
 
 /* colors */

@@ -1,7 +1,13 @@
 document.addEventListener('readystatechange', event => { 
     if (event.target.readyState === 'interactive') {
-        document.addEventListener('click', onMouseClick);
-        window.addEventListener('resize', onWindowResize);
+        document.addEventListener('click', (event) => {
+            if (navigation && navigation.classList.contains('show') && event.clientX > 250) toggleMobileMenu();
+            if (!event.target.parentNode.classList || !event.target.parentNode.classList.contains('dropdown')) hideAllDropdowns();
+        });
+        window.addEventListener('resize', (event) => {
+            if (navigation && navigation.classList.contains('show')) toggleMobileMenu();
+            hideAllDropdowns();
+        });
         onLoad(document);
     }
 });
@@ -11,7 +17,8 @@ let submitions = [];
 
 function onLoad(root) {
     for (const element of root.getElementsByTagName('*')) {
-        if (!menu && element.classList.contains('menu')) menu = element;
+        if (element.classList.contains('table-of-contents')) addOnPostLoad(() => generateTableOfContents(element));
+        else if (!menu && element.classList.contains('menu')) menu = element;
         else if (!navigation && element.classList.contains('navigation')) navigation = element;
         else if (!navigationContent && element.classList.contains('navigation-content')) navigationContent = element;
         else if (element.nodeName == 'H2' && element.id != '') headlines.push(element);
@@ -32,17 +39,7 @@ function onLoad(root) {
     for (let submition of submitions) submition.call();
 }
 
-function onMouseClick(event) {
-    if (navigation && navigation.classList.contains('show') && event.clientX > 250) toggleMobileMenu();
-    if (!event.target.parentNode.classList || !event.target.parentNode.classList.contains('dropdown')) hideAllDropdowns();
-}
-
-function onWindowResize() {
-    if (navigation && navigation.classList.contains('show')) toggleMobileMenu();
-    hideAllDropdowns();
-}
-
-function addOnLoad(submission) {
+function addOnPostLoad(submission) {
     submitions.push(submission);
 }
 
@@ -61,6 +58,20 @@ function replace(element, src) {
         }
         element.remove();
     });
+}
+
+// *********************
+// * Table of Contents *
+// *********************
+
+function generateTableOfContents(element) {
+    for (let headline of headlines) {
+        const link = document.createElement('a');
+        link.href = '#' + headline.id;
+        link.innerText = headline.innerText;
+        link.addEventListener('click', () => toggleMobileMenu());
+        element.appendChild(link);
+    }
 }
 
 // *********************
@@ -114,24 +125,7 @@ function initializeNavigation() {
         navigation = document.createElement('div');
         navigation.classList.add('navigation');
         navigation.classList.add('only-mobile');
-        let menuParent = menu.parentElement;
-        while(menuParent.nodeName === 'BODY' && menuParent.parentElement != undefined) {
-            menuParent = menu.parentElement;
-        }
-        if (menuParent.nextElementSibling) document.body.insertBefore(navigation, menuParent.nextElementSibling);
-        else document.body.appendChild(navigation);
-    }
-    if (navigation && navigation.classList.contains('navigation-headlines')) {
-        const navigationHeadlines = document.createElement('div');
-        navigationHeadlines.classList.add('navigation-auto-headlines');
-        for (let element of headlines) {
-            const link = document.createElement('a');
-            link.href = '#' + element.id;
-            link.innerText = element.innerText;
-            link.addEventListener('click', () => toggleMobileMenu());
-            navigationHeadlines.appendChild(link);
-        }
-        navigation.appendChild(navigationHeadlines);
+        document.body.insertBefore(navigation, menu ? menu.nextElementSibling : document.body.firstChild);
     }
     if (navigation && !navigationContent) navigationContent = navigation.nextElementSibling;
 }
