@@ -1,11 +1,11 @@
 document.addEventListener('readystatechange', event => { 
     if (event.target.readyState === 'interactive') {
         document.addEventListener('click', (event) => {
-            if (navigation && navigation.classList.contains('show') && event.clientX > 250) toggleMobileMenu();
+            if (navigation && navigation.classList.contains('show') && event.clientX > 250) toggleMobileNavigationMenu();
             if (!event.target.parentNode.classList || !event.target.parentNode.classList.contains('dropdown')) hideAllDropdowns();
         });
         window.addEventListener('resize', (event) => {
-            if (navigation && navigation.classList.contains('show')) toggleMobileMenu();
+            if (navigation && navigation.classList.contains('show')) toggleMobileNavigationMenu();
             hideAllDropdowns();
         });
         onLoad(document);
@@ -17,7 +17,7 @@ let submitions = [];
 
 function onLoad(root) {
     for (const element of root.getElementsByTagName('*')) {
-        if (element.classList.contains('table-of-contents')) addOnPostLoad(() => generateTableOfContents(element));
+        if (element.classList.contains('table-of-contents')) addOnPostLoad(() => { element.innerHTML = '';  generateTableOfContents(element) });
         else if (!menu && element.classList.contains('menu')) menu = element;
         else if (!navigation && element.classList.contains('navigation')) navigation = element;
         else if (!navigationContent && element.classList.contains('navigation-content')) navigationContent = element;
@@ -33,7 +33,6 @@ function onLoad(root) {
         if (element.hasAttribute('include')) include(element, element.getAttribute('include'));
         else if (element.hasAttribute('replace')) replace(element, element.getAttribute('replace'));
     }
-    initializeMenu();
     initializeNavigation();
     loaded = true;
     for (let submition of submitions) submition.call();
@@ -60,6 +59,27 @@ function replace(element, src) {
     });
 }
 
+function expose(id) {
+    const element = document.getElementById(id);
+    if (!element.classList.contains('hide')) return;
+    element.classList.remove('hide');
+    element.innerHTML = element.innerHTML.replace('<!--', '').replace('-->', '');
+    onLoad(element);
+}
+
+function cover(id) {
+    const element = document.getElementById(id);
+    if (element.classList.contains('hide')) return;
+    element.classList.add('hide');
+    element.innerHTML = '<!--' + element.innerHTML + '-->';
+}
+
+function toggle(id) {
+    const element = document.getElementById(id);
+    if (element.classList.contains('hide')) expose(id)
+    else cover(id);
+}
+
 // *********************
 // * Table of Contents *
 // *********************
@@ -69,7 +89,7 @@ function generateTableOfContents(element) {
         const link = document.createElement('a');
         link.href = '#' + headline.id;
         link.innerText = headline.innerText;
-        link.addEventListener('click', () => toggleMobileMenu());
+        link.addEventListener('click', () => toggleMobileNavigationMenu());
         element.appendChild(link);
     }
 }
@@ -79,20 +99,6 @@ function generateTableOfContents(element) {
 // *********************
 
 let menu;
-
-function initializeMenu() {
-    if (!menu.classList.contains('mobile-menu')) return;
-    navigationMenu = document.createElement('div');
-    navigationMenu.classList.add('navigation-menu');
-    navigationMenu.classList.add('only-mobile');
-    for (let element of menu.children) {
-        if (element.nodeName != 'A' || element.classList.contains('not-mobile') || element.classList.contains('menu-title')) continue;
-        const menuItem = element.cloneNode(true);
-        menuItem.addEventListener('click', () => toggleMobileMenu());
-        navigationMenu.appendChild(menuItem);
-        element.classList.add('not-mobile');
-    }
-}
 
 function setMenuFocus(string) {
     if (!loaded) {
@@ -104,8 +110,8 @@ function setMenuFocus(string) {
         if (element.innerText == string) element.classList.add('menu-active');
         else element.classList.remove('menu-active');
     }
-    if (!navigationMenu) return;
-    for (let element of navigationMenu.getElementsByTagName('A')) {
+    if (!mobileNavigationMenu) return;
+    for (let element of mobileNavigationMenu.getElementsByTagName('A')) {
         if (element.innerText == string) element.classList.add('menu-active');
         else element.classList.remove('menu-active');
     }
@@ -116,7 +122,7 @@ function setMenuFocus(string) {
 // *********************
 
 let navigation;
-let navigationMenu;
+let mobileNavigationMenu;
 let navigationContent;
 let headlines = [];
 
@@ -128,6 +134,25 @@ function initializeNavigation() {
         document.body.insertBefore(navigation, menu ? menu.nextElementSibling : document.body.firstChild);
     }
     if (navigation && !navigationContent) navigationContent = navigation.nextElementSibling;
+    if (menu && menu.classList.contains('mobile-menu') && navigation) {
+        if (navigation.getElementsByClassName('mobile-navigation')[0]) {
+            mobileNavigationMenu = navigation.getElementsByClassName('mobile-navigation')[0];
+        } else {
+            mobileNavigationMenu = document.createElement('div');
+            mobileNavigationMenu.classList.add('mobile-navigation');
+            if (navigation.children.length == 0) navigation.appendChild(mobileNavigationMenu);
+            else navigation.insertBefore(mobileNavigationMenu, navigation.children[0]);
+        }
+        mobileNavigationMenu.classList.add('only-mobile');
+        mobileNavigationMenu.innerHTML = '';
+        for (let element of menu.children) {
+            if (element.nodeName != 'A' || element.classList.contains('not-mobile') || element.classList.contains('menu-title')) continue;
+            const menuItem = element.cloneNode(true);
+            menuItem.addEventListener('click', () => toggleMobileNavigationMenu());
+            mobileNavigationMenu.appendChild(menuItem);
+            element.classList.add('not-mobile');
+        }
+    }
 }
 
 function setNavigationFocus(string) {
@@ -143,17 +168,14 @@ function setNavigationFocus(string) {
     }
 }
 
-function toggleMobileMenu() {
-    if (window.innerWidth > 768 || !navigationMenu) return;
+function toggleMobileNavigationMenu() {
+    if (window.innerWidth > 768 || !mobileNavigationMenu) return;
     if (!navigation.classList.contains('show')) {
-        navigation.insertBefore(navigationMenu, navigation.children[0]);
         navigation.classList.add('show');
         if (navigationContent) navigationContent.classList.add('navigation-content-hide');
     } else {
         if (navigationContent) navigationContent.classList.remove('navigation-content-hide');
         navigation.classList.remove('show');
-        const oldNavigationMenu = navigation.getElementsByClassName('navigation-menu')[0];
-        if (oldNavigationMenu != undefined) navigation.removeChild(oldNavigationMenu);
     }
 }
 
