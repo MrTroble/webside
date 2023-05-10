@@ -56,6 +56,7 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: var(--theme-border-radius);
     padding: 10px 15px;
     cursor: pointer;
+    margin-bottom: var(--theme-element-spacing);
 }
 
 .skill *:first-child {
