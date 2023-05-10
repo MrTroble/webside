@@ -20,8 +20,25 @@
             <h2>Verantwortlicher</h2>
                 
             <p>
-                {{ Adesse }}
+                Nico Fröhlich<br>
+                Insterburgerstr. 26b<br>
+                Karlsruhe 76139
             </p>
+
+            <span id="mail" class="button" onclick="revealMail(this)">Mail anzeigen</span>
+
+            <script>
+                function revealMail(element) {
+                    element.classList.remove('button');
+                    element.innerHTML = decodeURIComponent(escape(window.atob('bmljb2Zyb2VobGljaEBpY2xvdWQuY29t')));
+                }
+            </script>
+
+            <script>
+                function revealMail() {
+                    document.getElementById('mail').innerHTML = '';
+                }
+            </script>
 
             <h2>Hosting</h2>
             <p>Unser Hoster erhebt in sogenannte Logfiles folgende Daten, die Ihr Browser übermittelt:</p>

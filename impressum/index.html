@@ -17,7 +17,20 @@
 
             <h2>Angaben gemäß §5 TMG</h2>
 
-            <p>{{ Adresse }}</p>
+            <p>
+                Nico Fröhlich<br>
+                Insterburgerstr. 26b<br>
+                Karlsruhe 76139
+            </p>
+
+            <span id="mail" class="button" onclick="revealMail(this)">Mail anzeigen</span>
+
+            <script>
+                function revealMail(element) {
+                    element.classList.remove('button');
+                    element.innerHTML = decodeURIComponent(escape(window.atob('bmljb2Zyb2VobGljaEBpY2xvdWQuY29t')));
+                }
+            </script>
 
             <h2>Geltungsbereich des Impressums</h2>
 

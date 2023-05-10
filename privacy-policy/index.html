@@ -20,8 +20,19 @@
             <h2>Responsible</h2>
                 
             <p>
-                {{ Adesse }}
+                Nico Fröhlich<br>
+                Insterburgerstr. 26b<br>
+                Karlsruhe 76139
             </p>
+
+            <span id="mail" class="button" onclick="revealMail(this)">Show mail</span>
+
+            <script>
+                function revealMail(element) {
+                    element.classList.remove('button');
+                    element.innerHTML = decodeURIComponent(escape(window.atob('bmljb2Zyb2VobGljaEBpY2xvdWQuY29t')));
+                }
+            </script>
 
             <h2>Hosting</h2>
             <p>Our hoster collects the following data in so-called log files, which your browser transmits:</p>
