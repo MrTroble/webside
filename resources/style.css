@@ -15,7 +15,7 @@
     .menu-frame {
         box-sizing: border-box;
         padding: var(--theme-element-spacing);
-        background: linear-gradient(0deg, transparent 0%, black 100%);
+        background: linear-gradient(0deg, transparent 0%, #00000080 100%);
     }
 
     .menu {
