@@ -14,13 +14,13 @@
 @media screen and (min-width: 769px) {
     .menu-frame {
         box-sizing: border-box;
-        max-width: 1200px;
-        margin: 0px auto;
         padding: var(--theme-element-spacing);
         background: linear-gradient(0deg, transparent 0%, black 100%);
     }
 
     .menu {
+        max-width: calc(1200px - var(--theme-element-spacing) * 2);
+        margin: 0px auto;
         border-radius: var(--theme-border-radius);
     }
 }
@@ -53,14 +53,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .skill {
-    background-color: var(--theme-grey-primary);
-    border-radius: var(--theme-border-radius);
-    padding: 10px 15px;
-    margin-bottom: var(--theme-element-spacing);
-}
-
-.skill *:first-child {
-    font-size: 22px;
+    bottom: 20px !important;
 }
 
 .skill *:last-child {
