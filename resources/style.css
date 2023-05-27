@@ -60,30 +60,8 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 12px;
 }
 
-.project-box .box-bottom a {
-    display: block;
-    margin-left: auto;
-}
-
-.parallax {
-    position: fixed;
-    top: 0px;
-    width: 100%;
-    min-height: 300px;
-    max-height: 300px;
-    object-fit: cover;
-}
-
-.parallax-content {
-    width: 100%;
-    position: absolute;
-    background-color: black;
-    z-index: 1;
-    top: 300px;
-}
-
-#project-bar {
-    padding-top: var(--theme-element-spacing);
-    padding-bottom: var(--theme-element-spacing);
-    margin-bottom: 0px;
+.project-name {
+    background-color: #000000a0;
+    padding: 2px 8px;
+    border-radius: var(--theme-border-radius);
 }
